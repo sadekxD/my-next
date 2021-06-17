@@ -1,10 +1,11 @@
 import Head from "next/head";
+import Link from "next/link";
 import Layout, { siteTitle } from "../components/layout";
+import { getAllPostIds } from "../lib/posts";
 import utilStyles from "../styles/utils.module.css";
-import { getSortedPostsData } from "../lib/posts";
 
-export default function Home({ allPostsData, me }) {
-	console.log(allPostsData);
+export default function Home({ paths }) {
+	console.log(paths);
 	return (
 		<Layout home>
 			<Head>
@@ -17,17 +18,26 @@ export default function Home({ allPostsData, me }) {
 					<a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
 				</p>
 			</section>
+			<h3 className={utilStyles.headingXl}>All available posts</h3>
+			{paths.map(({ params }) => {
+				return (
+					<div key={params.id}>
+						<Link href={`/posts/${params.id}`}>
+							<a className={utilStyles.link}>{params.id}</a>
+						</Link>
+						<br />
+					</div>
+				);
+			})}
 		</Layout>
 	);
 }
 
 export async function getStaticProps() {
-	const allPostsData = getSortedPostsData();
-	const me = { f_name: "irfan", l_name: "sadek" };
+	const paths = getAllPostIds();
 	return {
 		props: {
-			allPostsData,
-			me,
+			paths,
 		},
 	};
 }
